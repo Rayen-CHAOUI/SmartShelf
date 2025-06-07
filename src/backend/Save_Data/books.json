@@ -1,0 +1,52 @@
+[
+    {
+        "id": "0000",
+        "title": "5 Seconds Rule",
+        "author": "Mel Robbins"
+    },
+    {
+        "id": "0001",
+        "title": "Pale Horse",
+        "author": "Agatha Christie"
+    },
+    {
+        "id": "0002",
+        "title": "Atomic Habits",
+        "author": "James Clear"
+    },
+    {
+        "id": "0003",
+        "title": "To Kill a Mockingbird",
+        "author": "Harper Lee"
+    },
+    {
+        "id": "0004",
+        "title": "1984",
+        "author": "George Orwell"
+    },
+    {
+        "id": "0005",
+        "title": "The Alchemist",
+        "author": "Paulo Coelho"
+    },
+    {
+        "id": "0006",
+        "title": "The Subtle Art of Not Giving a F*ck",
+        "author": "Mark Manson"
+    },
+    {
+        "id": "0007",
+        "title": "The Power of Now",
+        "author": "Eckhart Tolle"
+    },
+    {
+        "id": "0008",
+        "title": "Sapiens: A Brief History of Humankind",
+        "author": "Yuval Noah Harari"
+    },
+    {
+        "id": "0009",
+        "title": "Thinking, Fast and Slow",
+        "author": "Daniel Kahneman"
+    }
+]
