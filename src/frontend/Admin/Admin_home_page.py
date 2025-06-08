@@ -1,22 +1,21 @@
 import flet as ft
 from backend.routes.add_book_logic import add_book as backend_add_book
 from backend.routes.remove_book_logic import remove_book as backend_remove_book
-from backend.routes.signup_Logic import signup as backend_add_user  
+from backend.routes.signup_Logic import signup as backend_add_user
 from backend.routes.remove_user_logic import remove_user as backend_remove_user
 from backend.Save_Data.save_book import load_books as backend_load_books
 from backend.Save_Data.save_user import load_users as backend_load_users
 
 
-#############################################################################
-def home_view(page: ft.Page):
+def Admin_home_view(page: ft.Page):
     title_field = ft.TextField(label="Book Title", width=300)
     author_field = ft.TextField(label="Author", width=300)
+    download_url_field = ft.TextField(label="Download Link", width=300)
     result_text = ft.Text("", color="white")
     id_field_book = ft.TextField(label="Book ID", width=300)
     id_field_user = ft.TextField(label="User ID", width=300)
     username_field = ft.TextField(label="Username", width=300)
     password_field = ft.TextField(label="Password", width=300, password=True)
-###########################################################################""
 
     books_table = ft.DataTable(
         columns=[
@@ -24,6 +23,7 @@ def home_view(page: ft.Page):
             ft.DataColumn(label=ft.Text("ID")),
             ft.DataColumn(label=ft.Text("Title")),
             ft.DataColumn(label=ft.Text("Author")),
+            ft.DataColumn(label=ft.Text("Download url"))
         ],
         rows=[]
     )
@@ -40,14 +40,15 @@ def home_view(page: ft.Page):
 
     def load_books_to_table():
         books = backend_load_books()
-        limited_books = books[:5]  
+        limited_books = books[:5]
         books_table.rows = [
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(str(index + 1))),
                     ft.DataCell(ft.Text(book["id"])),
                     ft.DataCell(ft.Text(book["title"])),
-                    ft.DataCell(ft.Text(book["author"]))
+                    ft.DataCell(ft.Text(book["author"])),
+                    ft.DataCell(ft.Text(book["download_url"]))
                 ]
             )
             for index, book in enumerate(limited_books)
@@ -76,8 +77,6 @@ def home_view(page: ft.Page):
     def go_show_more_users(e):
         page.go("/users")
 
-######################################################################""
-    # Add Book Dialog
     def open_add_book_dialog(e):
         page.dialog = add_book_dialog
         add_book_dialog.open = True
@@ -96,6 +95,7 @@ def home_view(page: ft.Page):
             if success:
                 title_field.value = ""
                 author_field.value = ""
+                download_url_field.value = ""
                 load_books_to_table()
                 add_book_dialog.open = False
         page.update()
@@ -107,7 +107,7 @@ def home_view(page: ft.Page):
 
     add_book_dialog = ft.AlertDialog(
         title=ft.Text("Add New Book"),
-        content=ft.Column([title_field, author_field, result_text], tight=True),
+        content=ft.Column([title_field, author_field, download_url_field, result_text], tight=True),
         actions=[
             ft.TextButton("Cancel", on_click=close_add_book_dialog),
             ft.ElevatedButton("Add", on_click=submit_add_book),
@@ -116,8 +116,6 @@ def home_view(page: ft.Page):
     )
     page.overlay.append(add_book_dialog)
 
-######################################################################""
-    # Remove Book Dialog
     def open_remove_book_dialog(e):
         page.dialog = remove_book_dialog
         remove_book_dialog.open = True
@@ -153,8 +151,7 @@ def home_view(page: ft.Page):
         actions_alignment="end",
     )
     page.overlay.append(remove_book_dialog)
-######################################################################""
-    # Add User Dialog
+
     def open_add_user_dialog(e):
         page.dialog = add_user_dialog
         add_user_dialog.open = True
@@ -192,8 +189,7 @@ def home_view(page: ft.Page):
         actions_alignment="end",
     )
     page.overlay.append(add_user_dialog)
-######################################################################""
-    # Remove User Dialog
+
     def open_remove_user_dialog(e):
         page.dialog = remove_user_dialog
         remove_user_dialog.open = True
@@ -229,8 +225,7 @@ def home_view(page: ft.Page):
         actions_alignment="end",
     )
     page.overlay.append(remove_user_dialog)
-######################################################################""
-    # Logout Dialog
+
     logout_modal = ft.AlertDialog(
         modal=True,
         title=ft.Text("Please confirm"),
@@ -252,13 +247,12 @@ def home_view(page: ft.Page):
         page.dialog = logout_modal
         logout_modal.open = True
         page.update()
-######################################################################""
-    # Initial data load
+
     load_books_to_table()
     load_users_to_table()
 
     return ft.View(
-        "/home",
+        route="/home",
         controls=[
             ft.AppBar(
                 title=ft.Text(
@@ -282,64 +276,56 @@ def home_view(page: ft.Page):
                     )
                 ],
             ),
-
-ft.Container(
-    expand=True,
-    padding=20,
-    bgcolor="#000000",
-    content=ft.Column(
-        scroll=ft.ScrollMode.AUTO,
-        controls=[
-            ft.Text("Books available in the Library", color="white", size=20),
-
-            ft.Row(
-                controls=[
-                    ft.Row(
-                        controls=[books_table],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        expand=True
-                    ),
-                    ft.TextButton(
-                        "Show more..",
-                        on_click=go_show_more_books,
-                        style=ft.ButtonStyle(
-                            text_style=ft.TextStyle(
-                                color=ft.Colors.BLUE_300,
-                                decoration=ft.TextDecoration.UNDERLINE
-                            )
+            ft.Container(
+                expand=True,
+                padding=20,
+                bgcolor="#000000",
+                content=ft.Column(
+                    scroll=ft.ScrollMode.AUTO,
+                    controls=[
+                        ft.Text("Books available in the Library", color="white", size=20),
+                        ft.Row(
+                            controls=[
+                                ft.Row(controls=[books_table], alignment=ft.MainAxisAlignment.CENTER, expand=True),
+                                ft.TextButton(
+                                    "Show more..", on_click=go_show_more_books,
+                                    style=ft.ButtonStyle(
+                                        text_style=ft.TextStyle(
+                                            color=ft.Colors.BLUE_300,
+                                            decoration=ft.TextDecoration.UNDERLINE
+                                        )
+                                    )
+                                )
+                            ],
+                            alignment=ft.MainAxisAlignment.END
+                        ),
+                        ft.Text("Users Registered in the Library", color="white", size=20),
+                        ft.Row(
+                            controls=[
+                                ft.Row(controls=[users_table], alignment=ft.MainAxisAlignment.CENTER, expand=True),
+                                ft.TextButton(
+                                    "Show more..", on_click=go_show_more_users,
+                                    style=ft.ButtonStyle(
+                                        text_style=ft.TextStyle(
+                                            color=ft.Colors.BLUE_300,
+                                            decoration=ft.TextDecoration.UNDERLINE
+                                        )
+                                    )
+                                )
+                            ],
+                            alignment=ft.MainAxisAlignment.END
                         )
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.END
-            ),
-
-            ft.Text("Users Registered in the Library", color="white", size=20),
-
-            ft.Row(
-                controls=[
-                    ft.Row(
-                        controls=[users_table],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        expand=True
-                    ),
-                    ft.TextButton(
-                        "Show more..",
-                        on_click=go_show_more_users,
-                        style=ft.ButtonStyle(
-                            text_style=ft.TextStyle(
-                                color=ft.Colors.BLUE_300,
-                                decoration=ft.TextDecoration.UNDERLINE
-                            )
-                        )
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.END
+                    ]
+                )
             )
-        ]
-    )
-)
-
-
         ],
         bgcolor="#000000"
     )
+
+
+if __name__ == "__main__":
+    def main(page: ft.Page):
+        page.views.append(Admin_home_view(page))
+        page.go("/home")
+
+    ft.app(target=main)

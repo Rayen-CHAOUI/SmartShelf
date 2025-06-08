@@ -2,51 +2,61 @@
     {
         "id": "0000",
         "title": "5 Seconds Rule",
-        "author": "Mel Robbins"
+        "author": "Mel Robbins",
+        "download_url": "https://localhost:port/books/5_seconds_rule.pdf"
     },
     {
         "id": "0001",
         "title": "Pale Horse",
-        "author": "Agatha Christie"
+        "author": "Agatha Christie",
+        "download_url": "https://localhost:port/books/pale_horse.pdf"
     },
     {
         "id": "0002",
         "title": "Atomic Habits",
-        "author": "James Clear"
+        "author": "James Clear",
+        "download_url": "https://localhost:port/books/atomic_habits.pdf"
     },
     {
         "id": "0003",
         "title": "To Kill a Mockingbird",
-        "author": "Harper Lee"
+        "author": "Harper Lee",
+        "download_url": "https://localhost:port/books/to_kill_a_mockingbird.pdf"
     },
     {
         "id": "0004",
         "title": "1984",
-        "author": "George Orwell"
+        "author": "George Orwell",
+        "download_url": "https://localhost:port/books/1984.pdf"
     },
     {
         "id": "0005",
         "title": "The Alchemist",
-        "author": "Paulo Coelho"
+        "author": "Paulo Coelho",
+        "download_url": "https://localhost:port/books/the_alchemist.pdf"
     },
     {
         "id": "0006",
         "title": "The Subtle Art of Not Giving a F*ck",
-        "author": "Mark Manson"
+        "author": "Mark Manson",
+        "download_url": "https://localhost:port/books/the_subtle_art.pdf"
     },
     {
         "id": "0007",
         "title": "The Power of Now",
-        "author": "Eckhart Tolle"
+        "author": "Eckhart Tolle",
+        "download_url": "https://localhost:port/books/the_power_of_now.pdf"
     },
     {
         "id": "0008",
         "title": "Sapiens: A Brief History of Humankind",
-        "author": "Yuval Noah Harari"
+        "author": "Yuval Noah Harari",
+        "download_url": "https://localhost:port/books/sapiens.pdf"
     },
     {
         "id": "0009",
         "title": "Thinking, Fast and Slow",
-        "author": "Daniel Kahneman"
+        "author": "Daniel Kahneman",
+        "download_url": "https://localhost:port/books/thinking_fast_and_slow.pdf"
     }
 ]

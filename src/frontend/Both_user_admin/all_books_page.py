@@ -104,6 +104,13 @@ def all_books_view(page: ft.Page):
     # ------------------ Load Books into Table ------------------ #
     def load_books_to_table():
         books = backend_load_books()
+
+        def navigate_to_detail(book):
+            def handler(e):
+                page.session.set("selected_book", book)  # Save book in session
+                page.go("/book_detail")
+            return handler
+
         books_table.rows = [
             ft.DataRow(
                 cells=[
@@ -111,7 +118,8 @@ def all_books_view(page: ft.Page):
                     ft.DataCell(ft.Text(book["id"])),
                     ft.DataCell(ft.Text(book["title"])),
                     ft.DataCell(ft.Text(book["author"]))
-                ]
+                ],
+                on_select_changed=navigate_to_detail(book)
             )
             for index, book in enumerate(books)
         ]
