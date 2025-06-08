@@ -58,5 +58,77 @@
         "title": "Thinking, Fast and Slow",
         "author": "Daniel Kahneman",
         "download_url": "https://localhost:port/books/thinking_fast_and_slow.pdf"
+    },
+    {
+        "id": "0010",
+        "title": "Clean Code",
+        "author": "Robert C. Martin",
+        "download_url": "https://localhost:port/books/clean_code.pdf"
+    },
+    {
+        "id": "0011",
+        "title": "The Pragmatic Programmer",
+        "author": "Andrew Hunt and David Thomas",
+        "download_url": "https://localhost:port/books/the_pragmatic_programmer.pdf"
+    },
+    {
+        "id": "0012",
+        "title": "Deep Work",
+        "author": "Cal Newport",
+        "download_url": "https://localhost:port/books/deep_work.pdf"
+    },
+    {
+        "id": "0013",
+        "title": "Thinking in Systems",
+        "author": "Donella Meadows",
+        "download_url": "https://localhost:port/books/thinking_in_systems.pdf"
+    },
+    {
+        "id": "0014",
+        "title": "The Lean Startup",
+        "author": "Eric Ries",
+        "download_url": "https://localhost:port/books/the_lean_startup.pdf"
+    },
+    {
+        "id": "0015",
+        "title": "The Four Agreements",
+        "author": "Don Miguel Ruiz",
+        "download_url": "https://localhost:port/books/the_four_agreements.pdf"
+    },
+    {
+        "id": "0016",
+        "title": "Man’s Search for Meaning",
+        "author": "Viktor E. Frankl",
+        "download_url": "https://localhost:port/books/mans_search_for_meaning.pdf"
+    },
+    {
+        "id": "0017",
+        "title": "Grit",
+        "author": "Angela Duckworth",
+        "download_url": "https://localhost:port/books/grit.pdf"
+    },
+    {
+        "id": "0018",
+        "title": "Meditations",
+        "author": "Marcus Aurelius",
+        "download_url": "https://localhost:port/books/meditations.pdf"
+    },
+    {
+        "id": "0019",
+        "title": "The Art of War",
+        "author": "Sun Tzu",
+        "download_url": "https://localhost:port/books/the_art_of_war.pdf"
+    },
+    {
+        "id": "0020",
+        "title": "The 7 Habits of Highly Effective People",
+        "author": "Stephen R. Covey",
+        "download_url": "https://localhost:port/books/the_7_habits.pdf"
+    },
+    {
+        "id": "0021",
+        "title": "The Richest",
+        "author": "Robert Kiyosaki",
+        "download_url": "https://localhost:port/books/the_richest.pdf"
     }
 ]

@@ -1,7 +1,6 @@
 import flet as ft
 from backend.Save_Data.save_book import load_books as backend_load_books
-from backend.routes.add_book_logic import add_book as backend_add_book
-from backend.routes.remove_book_logic import remove_book as backend_remove_book
+from backend.routes.suggest_book_logic import add_suggested_book
 
 
 def all_books_view(page: ft.Page):
@@ -15,90 +14,60 @@ def all_books_view(page: ft.Page):
         rows=[]
     )
 
-    title_field = ft.TextField(label="Book Title", width=300)
-    author_field = ft.TextField(label="Author", width=300)
-    id_field_book = ft.TextField(label="Book ID", width=300)
-    result_text = ft.Text(value="", color="green")
+    # Search field
+    search_field = ft.TextField(
+        hint_text="Search by title or author...",
+        width=400,
+        suffix_icon=ft.Icons.SEARCH,
+    )
 
-    # ------------------ Add Book Dialog ------------------ #
-    def open_add_book_dialog(e=None):
-        page.dialog = add_book_dialog
-        add_book_dialog.open = True
+    # Result text for Suggest Book dialog
+    suggest_result_text = ft.Text(value="", color="green")
+
+    # Suggest Book input fields
+    suggest_title_field = ft.TextField(label="Book Title", width=300)
+    suggest_author_field = ft.TextField(label="Author", width=300)
+
+    # --------------- Suggest Book Dialog --------------- #
+    def open_suggest_book_dialog(e=None):
+        page.dialog = suggest_book_dialog
+        suggest_book_dialog.open = True
         page.update()
 
-    def submit_add_book(e=None):
-        title = title_field.value.strip()
-        author = author_field.value.strip()
+    def submit_suggest_book(e=None):
+        title = suggest_title_field.value.strip()
+        author = suggest_author_field.value.strip()
 
         if not title or not author:
-            result_text.value = "Please fill in all fields."
-            result_text.color = "red"
+            suggest_result_text.value = "Please fill in all fields."
+            suggest_result_text.color = "red"
         else:
-            success, message = backend_add_book(title, author)
-            result_text.value = message
-            result_text.color = "green" if success else "red"
+            success, message = add_suggested_book(title, author)
+            suggest_result_text.value = message
+            suggest_result_text.color = "green" if success else "red"
             if success:
-                title_field.value = ""
-                author_field.value = ""
-                load_books_to_table()
-                add_book_dialog.open = False
+                suggest_title_field.value = ""
+                suggest_author_field.value = ""
+                suggest_book_dialog.open = False
         page.update()
 
-    def close_add_book_dialog(e=None):
-        add_book_dialog.open = False
-        result_text.value = ""
+    def close_suggest_book_dialog(e=None):
+        suggest_book_dialog.open = False
+        suggest_result_text.value = ""
         page.update()
 
-    add_book_dialog = ft.AlertDialog(
-        title=ft.Text("Add New Book"),
-        content=ft.Column([title_field, author_field, result_text], tight=True),
+    suggest_book_dialog = ft.AlertDialog(
+        title=ft.Text("Suggest a New Book"),
+        content=ft.Column([suggest_title_field, suggest_author_field, suggest_result_text], tight=True),
         actions=[
-            ft.TextButton("Cancel", on_click=close_add_book_dialog),
-            ft.ElevatedButton("Add", on_click=submit_add_book),
+            ft.TextButton("Cancel", on_click=close_suggest_book_dialog),
+            ft.ElevatedButton("Submit", on_click=submit_suggest_book),
         ],
         actions_alignment="end",
     )
-    page.overlay.append(add_book_dialog)
+    page.overlay.append(suggest_book_dialog)
 
-    # ------------------ Remove Book Dialog ------------------ #
-    def open_remove_book_dialog(e=None):
-        page.dialog = remove_book_dialog
-        remove_book_dialog.open = True
-        page.update()
-
-    def submit_remove_book(e=None):
-        book_id = id_field_book.value.strip()
-
-        if not book_id:
-            result_text.value = "Please enter a valid Book ID."
-            result_text.color = "red"
-        else:
-            success, message = backend_remove_book(book_id)
-            result_text.value = message
-            result_text.color = "green" if success else "red"
-            if success:
-                id_field_book.value = ""
-                load_books_to_table()
-                remove_book_dialog.open = False
-        page.update()
-
-    def close_remove_book_dialog(e=None):
-        remove_book_dialog.open = False
-        result_text.value = ""
-        page.update()
-
-    remove_book_dialog = ft.AlertDialog(
-        title=ft.Text("Delete a Book"),
-        content=ft.Column([id_field_book, ft.Text("Enter the Book ID to remove."), result_text], tight=True),
-        actions=[
-            ft.TextButton("Cancel", on_click=close_remove_book_dialog),
-            ft.ElevatedButton("Remove", on_click=submit_remove_book),
-        ],
-        actions_alignment="end",
-    )
-    page.overlay.append(remove_book_dialog)
-
-    # ------------------ Load Books into Table ------------------ #
+    # --------------- Load books into table --------------- #
     def load_books_to_table(filtered_books=None):
         books = filtered_books if filtered_books is not None else backend_load_books()
 
@@ -122,15 +91,8 @@ def all_books_view(page: ft.Page):
         ]
         page.update()
 
-    # ------------------ Search ------------------ #
-    search_field = ft.TextField(
-        hint_text="Search by title or author...",
-        width=400,
-        suffix_icon=ft.Icons.SEARCH,
-        on_change=lambda e: search_books()
-    )
-
-    def search_books():
+    # --------------- Search logic --------------- #
+    def search_books(e=None):
         keyword = search_field.value.strip().lower()
         if not keyword:
             load_books_to_table()
@@ -142,13 +104,16 @@ def all_books_view(page: ft.Page):
             ]
             load_books_to_table(filtered_books)
 
-    # ------------------ Navigation ------------------ #
+    search_field.on_change = search_books
+
+    # --------------- Navigation --------------- #
     def go_back(e):
         page.go("/home")
 
-    # ------------------ Load all books initially ------------------ #
+    # Load all books initially
     load_books_to_table()
 
+    # --------------- View Definition --------------- #
     return ft.View(
         "/books",
         controls=[
@@ -157,32 +122,36 @@ def all_books_view(page: ft.Page):
                 leading=ft.IconButton(ft.Icons.ARROW_BACK, on_click=go_back),
                 bgcolor=ft.Colors.BLUE_800,
                 actions=[
-                    ft.IconButton(icon=ft.Icons.ADD, on_click=open_add_book_dialog),
-                    ft.IconButton(icon=ft.Icons.REMOVE, on_click=open_remove_book_dialog),
+                    ft.IconButton(icon=ft.Icons.BOOK, tooltip="Suggest a Book", on_click=open_suggest_book_dialog),
                 ]
             ),
             ft.Container(
                 padding=20,
                 bgcolor="#000000",
+                expand=True,
                 content=ft.Column(
+                    scroll=ft.ScrollMode.AUTO,
+                    expand=True,
                     controls=[
                         ft.Row(
                             controls=[
                                 search_field,
-                                ft.TextButton("Reset", on_click=lambda e: [search_field.__setattr__("value", ""), load_books_to_table()])
+                                ft.TextButton(
+                                    "Reset",
+                                    on_click=lambda e: [setattr(search_field, "value", ""), load_books_to_table()]
+                                ),
                             ],
-                            alignment=ft.MainAxisAlignment.CENTER
+                            alignment=ft.MainAxisAlignment.CENTER,
                         ),
                         ft.Divider(),
                         ft.Row(
                             controls=[books_table],
-                            alignment=ft.MainAxisAlignment.CENTER
-                        )
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
                     ],
                     alignment=ft.MainAxisAlignment.START,
-                    expand=True
                 ),
             ),
         ],
-        bgcolor="#000000"
+        bgcolor="#000000",
     )

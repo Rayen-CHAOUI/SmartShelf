@@ -25,6 +25,8 @@ def user_home_view(page: ft.Page):
                 page.session.set("selected_book", book)  # Save book in session
                 page.go("/book_detail")
             return handler
+        
+        limited_books = books[:10] # Limit to first 10 books for display
 
         books_table.rows = [
             ft.DataRow(
@@ -34,9 +36,9 @@ def user_home_view(page: ft.Page):
                     ft.DataCell(ft.Text(book["title"])),
                     ft.DataCell(ft.Text(book["author"]))
                 ],
-                on_select_changed=navigate_to_detail(book)
+                on_select_changed=navigate_to_detail(books)
             )
-            for index, book in enumerate(books)
+            for index, book in enumerate(limited_books)
         ]
         page.update()
 
@@ -76,7 +78,7 @@ def user_home_view(page: ft.Page):
         controls=[
             ft.AppBar(
                 title=ft.Text(
-                    "Welcome to SmartShelf",
+                    "Welcome to SmartShelf !",
                     size=25,
                     weight=ft.FontWeight.BOLD,
                     color="white",
