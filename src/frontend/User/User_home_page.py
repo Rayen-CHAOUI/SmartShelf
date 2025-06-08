@@ -84,6 +84,11 @@ def user_home_view(page: ft.Page):
                 ),
                 bgcolor=ft.Colors.BLUE_800,
                 actions=[
+                    ft.IconButton(
+                        icon=ft.Icons.SEARCH,
+                        tooltip="Search Book",
+                        on_click=lambda e: page.go("/books")
+                    ),
                     ft.PopupMenuButton(
                         items=[
                             ft.PopupMenuItem(text="Profile", on_click=lambda e: page.go("/user_profile")),

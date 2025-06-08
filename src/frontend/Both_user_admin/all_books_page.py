@@ -1,5 +1,3 @@
-#src/frontend/all_books_page.py
-
 import flet as ft
 from backend.Save_Data.save_book import load_books as backend_load_books
 from backend.routes.add_book_logic import add_book as backend_add_book
@@ -17,7 +15,6 @@ def all_books_view(page: ft.Page):
         rows=[]
     )
 
-    # Text fields and result display for dialogs
     title_field = ft.TextField(label="Book Title", width=300)
     author_field = ft.TextField(label="Author", width=300)
     id_field_book = ft.TextField(label="Book ID", width=300)
@@ -102,12 +99,12 @@ def all_books_view(page: ft.Page):
     page.overlay.append(remove_book_dialog)
 
     # ------------------ Load Books into Table ------------------ #
-    def load_books_to_table():
-        books = backend_load_books()
+    def load_books_to_table(filtered_books=None):
+        books = filtered_books if filtered_books is not None else backend_load_books()
 
         def navigate_to_detail(book):
             def handler(e):
-                page.session.set("selected_book", book)  # Save book in session
+                page.session.set("selected_book", book)
                 page.go("/book_detail")
             return handler
 
@@ -125,11 +122,32 @@ def all_books_view(page: ft.Page):
         ]
         page.update()
 
-    load_books_to_table()
+    # ------------------ Search ------------------ #
+    search_field = ft.TextField(
+        hint_text="Search by title or author...",
+        width=400,
+        suffix_icon=ft.Icons.SEARCH,
+        on_change=lambda e: search_books()
+    )
+
+    def search_books():
+        keyword = search_field.value.strip().lower()
+        if not keyword:
+            load_books_to_table()
+        else:
+            books = backend_load_books()
+            filtered_books = [
+                book for book in books
+                if keyword in book["title"].lower() or keyword in book["author"].lower()
+            ]
+            load_books_to_table(filtered_books)
 
     # ------------------ Navigation ------------------ #
     def go_back(e):
         page.go("/home")
+
+    # ------------------ Load all books initially ------------------ #
+    load_books_to_table()
 
     return ft.View(
         "/books",
@@ -144,11 +162,18 @@ def all_books_view(page: ft.Page):
                 ]
             ),
             ft.Container(
-                expand=True,
                 padding=20,
                 bgcolor="#000000",
                 content=ft.Column(
                     controls=[
+                        ft.Row(
+                            controls=[
+                                search_field,
+                                ft.TextButton("Reset", on_click=lambda e: [search_field.__setattr__("value", ""), load_books_to_table()])
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER
+                        ),
+                        ft.Divider(),
                         ft.Row(
                             controls=[books_table],
                             alignment=ft.MainAxisAlignment.CENTER
