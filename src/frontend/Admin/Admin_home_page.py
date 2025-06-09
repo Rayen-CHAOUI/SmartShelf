@@ -11,6 +11,15 @@ def Admin_home_view(page: ft.Page):
     title_field = ft.TextField(label="Book Title", width=300)
     author_field = ft.TextField(label="Author", width=300)
     download_url_field = ft.TextField(label="Download Link", width=300)
+    description_field = ft.TextField(label="Description", width=300)
+    published_date_field = ft.TextField(label="Published Date", width=300)
+    isbn_field = ft.TextField(label="ISBN", width=300)
+    category_field = ft.TextField(label="Category", width=300)
+    language_field = ft.TextField(label="Language", width=300)
+    pages_field = ft.TextField(label="Pages", width=300)
+    publisher_field = ft.TextField(label="Publisher", width=300)
+    rating_field = ft.TextField(label="Rating", width=300)
+
     result_text = ft.Text("", color="white")
     id_field_book = ft.TextField(label="Book ID", width=300)
     id_field_user = ft.TextField(label="User ID", width=300)
@@ -85,20 +94,33 @@ def Admin_home_view(page: ft.Page):
     def submit_add_book(e):
         title = title_field.value.strip()
         author = author_field.value.strip()
+        description = description_field.value.strip()
+        published_date = published_date_field.value.strip()
+        isbn = isbn_field.value.strip()
+        category = category_field.value.strip()
+        language = language_field.value.strip()
+        pages = pages_field.value.strip()
+        publisher = publisher_field.value.strip()
+        rating = rating_field.value.strip()
+        download_url = download_url_field.value.strip()
 
-        if not title or not author:
-            result_text.value = "Please fill in all fields."
+        if not title or not author or not download_url:
+            result_text.value = "Please fill in required fields (title, author, download link)."
             result_text.color = "red"
         else:
-            success, message = backend_add_book(title, author)
-            result_text.value = message
-            if success:
-                title_field.value = ""
-                author_field.value = ""
-                download_url_field.value = ""
-                load_books_to_table()
-                add_book_dialog.open = False
-        page.update()
+            success, message = backend_add_book(
+            title, author, description, published_date, isbn, category,
+            language, pages, publisher, rating, download_url
+        )
+        result_text.value = message
+        if success:
+            for field in [title_field, author_field, description_field, published_date_field, isbn_field,
+                          category_field, language_field, pages_field, publisher_field, rating_field, download_url_field]:
+                field.value = ""
+            load_books_to_table()
+            add_book_dialog.open = False
+    page.update()
+
 
     def close_add_book_dialog():
         add_book_dialog.open = False
@@ -107,13 +129,18 @@ def Admin_home_view(page: ft.Page):
 
     add_book_dialog = ft.AlertDialog(
         title=ft.Text("Add New Book"),
-        content=ft.Column([title_field, author_field, download_url_field, result_text], tight=True),
+        content=ft.Column([
+            title_field, author_field, description_field, published_date_field,
+            isbn_field, category_field, language_field, pages_field,
+            publisher_field, rating_field, download_url_field, result_text
+        ], tight=True),
         actions=[
             ft.TextButton("Cancel", on_click=close_add_book_dialog),
             ft.ElevatedButton("Add", on_click=submit_add_book),
         ],
         actions_alignment="end",
     )
+
     page.overlay.append(add_book_dialog)
 
     def open_remove_book_dialog(e):

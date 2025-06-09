@@ -36,7 +36,7 @@ def user_home_view(page: ft.Page):
                     ft.DataCell(ft.Text(book["title"])),
                     ft.DataCell(ft.Text(book["author"]))
                 ],
-                on_select_changed=navigate_to_detail(books)
+                on_select_changed=navigate_to_detail(book)
             )
             for index, book in enumerate(limited_books)
         ]

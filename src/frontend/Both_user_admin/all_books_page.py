@@ -4,31 +4,26 @@ from backend.routes.suggest_book_logic import add_suggested_book
 
 
 def all_books_view(page: ft.Page):
-    books_table = ft.DataTable(
-        columns=[
-            ft.DataColumn(label=ft.Text("Number")),
-            ft.DataColumn(label=ft.Text("ID")),
-            ft.DataColumn(label=ft.Text("Title")),
-            ft.DataColumn(label=ft.Text("Author")),
-        ],
-        rows=[]
+    # ------------------ Book Card Grid ------------------ #
+    books_grid = ft.ResponsiveRow(
+        spacing=15,
+        run_spacing=15,
+        alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    # Search field
+    # ------------------ Search Field ------------------ #
     search_field = ft.TextField(
         hint_text="Search by title or author...",
         width=400,
         suffix_icon=ft.Icons.SEARCH,
     )
 
-    # Result text for Suggest Book dialog
+    # ------------------ Suggest Book Dialog ------------------ #
     suggest_result_text = ft.Text(value="", color="green")
 
-    # Suggest Book input fields
     suggest_title_field = ft.TextField(label="Book Title", width=300)
     suggest_author_field = ft.TextField(label="Author", width=300)
 
-    # --------------- Suggest Book Dialog --------------- #
     def open_suggest_book_dialog(e=None):
         page.dialog = suggest_book_dialog
         suggest_book_dialog.open = True
@@ -67,53 +62,68 @@ def all_books_view(page: ft.Page):
     )
     page.overlay.append(suggest_book_dialog)
 
-    # --------------- Load books into table --------------- #
-    def load_books_to_table(filtered_books=None):
+    # ------------------ Load Books to Grid ------------------ #
+    def load_books_to_grid(filtered_books=None):
         books = filtered_books if filtered_books is not None else backend_load_books()
+        books_grid.controls.clear()
 
-        def navigate_to_detail(book):
-            def handler(e):
-                page.session.set("selected_book", book)
-                page.go("/book_detail")
-            return handler
+        for book in books:
+            def go_to_detail(book=book):
+                def handler(e):
+                    page.session.set("selected_book", book)
+                    page.go("/book_detail")
+                return handler
 
-        books_table.rows = [
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(index + 1))),
-                    ft.DataCell(ft.Text(book["id"])),
-                    ft.DataCell(ft.Text(book["title"])),
-                    ft.DataCell(ft.Text(book["author"]))
-                ],
-                on_select_changed=navigate_to_detail(book)
+            card = ft.Container(
+                width=250,
+                padding=15,
+                bgcolor=ft.Colors.with_opacity(0.08, ft.Colors.WHITE),
+                border_radius=12,
+                border=ft.border.all(1, ft.Colors.with_opacity(0.2, ft.Colors.WHITE)),
+                ink=True,
+                on_click=go_to_detail(),
+                content=ft.Column(
+                    spacing=5,
+                    horizontal_alignment=ft.CrossAxisAlignment.START,
+                    controls=[
+                        ft.Text(book["title"], size=16, weight="bold", overflow=ft.TextOverflow.ELLIPSIS),
+                        ft.Text(f"by {book['author']}", size=14, italic=True, color=ft.Colors.GREY_400),
+                        ft.Text(f"ID: {book['id']}", size=12, color=ft.Colors.GREY_600),
+                    ]
+                )
             )
-            for index, book in enumerate(books)
-        ]
+
+            books_grid.controls.append(
+                ft.ResponsiveRow(
+                    controls=[ft.Container(card, col={"sm": 12, "md": 6, "lg": 4})]
+                )
+            )
+
         page.update()
 
-    # --------------- Search logic --------------- #
+    # ------------------ Search Logic ------------------ #
     def search_books(e=None):
         keyword = search_field.value.strip().lower()
         if not keyword:
-            load_books_to_table()
+            load_books_to_grid()
         else:
             books = backend_load_books()
             filtered_books = [
                 book for book in books
                 if keyword in book["title"].lower() or keyword in book["author"].lower()
             ]
-            load_books_to_table(filtered_books)
+            load_books_to_grid(filtered_books)
 
     search_field.on_change = search_books
 
-    # --------------- Navigation --------------- #
+    # ------------------ Navigation ------------------ #
     def go_back(e):
         page.go("/home")
 
-    # Load all books initially
-    load_books_to_table()
+    # ------------------ Load Initially ------------------ #
+    load_books_to_grid()
 
-    # --------------- View Definition --------------- #
+    # ------------------ View Layout ------------------ #
     return ft.View(
         "/books",
         controls=[
@@ -138,18 +148,15 @@ def all_books_view(page: ft.Page):
                                 search_field,
                                 ft.TextButton(
                                     "Reset",
-                                    on_click=lambda e: [setattr(search_field, "value", ""), load_books_to_table()]
+                                    on_click=lambda e: [setattr(search_field, "value", ""), load_books_to_grid()]
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
                         ft.Divider(),
-                        ft.Row(
-                            controls=[books_table],
-                            alignment=ft.MainAxisAlignment.CENTER,
-                        ),
+                        books_grid,
                     ],
-                    alignment=ft.MainAxisAlignment.START,
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
         ],
